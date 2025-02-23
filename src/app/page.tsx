@@ -14,7 +14,9 @@ export default function Home() {
     return (
         <div className="container">
             <h1>Gluten free vegan recipes</h1>
-            <p>Here is a collection of recipes I've tried and that work for me. Everything is gluten free AND vegan, and also super tasty!</p>
+            <p>          {`
+        Here is a collection of recipes I've tried and that work for me. Everything is gluten free AND vegan, and also super tasty!
+      `}</p>
             <div className="categories">
                 {Object.entries(recipesByCategory).map(([category, recipes]) => (
                     <div key={category}>
