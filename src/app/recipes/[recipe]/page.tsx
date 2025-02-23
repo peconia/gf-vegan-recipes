@@ -1,12 +1,19 @@
-'use client'
+'use client';
+
 import React from "react";
 import Link from 'next/link';
 import Image from 'next/image';
-import {recipes} from "@/app/recipes/data";
-import {notFound} from "next/navigation";
+import { recipes } from "@/app/recipes/data";
+import { notFound } from "next/navigation";
 
-export default function RecipePage({params}: { params: Promise<{ recipe: string }> }) {
-    const {recipe: recipeSlug} = React.use(params);
+export async function generateStaticParams() {
+    return recipes.map((recipe) => ({
+        recipe: recipe.slug, // Use the `slug` as the dynamic parameter
+    }));
+}
+
+export default function RecipePage({ params }: { params: { recipe: string } }) {
+    const { recipe: recipeSlug } = params;
 
     const recipe = recipes.find((r) => r.slug === recipeSlug);
 
@@ -37,13 +44,13 @@ export default function RecipePage({params}: { params: Promise<{ recipe: string 
                 <div className="yields">
                     <p><strong>Yield:</strong> {recipe.yields}</p>
                 </div>
-                {recipe.oven &&
+                {recipe.oven && (
                     <div className="oven-info">
                         <p>
                             <strong>Oven:</strong> {recipe.oven.type} {recipe.oven.temperature}
                         </p>
                     </div>
-                }
+                )}
             </div>
             <h2>Ingredients</h2>
             <ul>
