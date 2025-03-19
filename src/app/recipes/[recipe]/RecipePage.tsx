@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { recipes } from "@/app/recipes/data";
 import { notFound } from 'next/navigation';
+import {formatFraction} from "@/utils/quantityHelper";
 
 export default function RecipePage() {
     const params = useParams();
@@ -51,7 +52,7 @@ export default function RecipePage() {
             <h2>Ingredients</h2>
             <ul>
                 {recipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient.quantity} {ingredient.unit} {ingredient.ingredient}</li>
+                    <li key={index}>{formatFraction(ingredient.quantity)} {ingredient.unit} {ingredient.ingredient}</li>
                 ))}
             </ul>
             <h2>Instructions</h2>

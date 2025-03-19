@@ -1,10 +1,10 @@
 import type {Metadata} from 'next';
-import {Roboto} from 'next/font/google';
+import {Noto_Serif} from 'next/font/google';
 import React from "react";
 import './globals.css';
 
-const roboto = Roboto({
-    weight: ['400', '700'],
+const roboto = Noto_Serif({
+    weight: ['400'],
     subsets: ['latin'],
 });
 

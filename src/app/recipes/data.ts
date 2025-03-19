@@ -37,7 +37,7 @@ export const recipes: Recipe[] = [
         description: 'Easy bread buns that can be frozen and reheated in the microwave to get fresh bread every day. High in fiber, about 5.5g per bun when made with buckwheat.',
         totalTime: "1 hour",
         yields: "9 buns",
-        image: '/breadbuns.jpg',
+        image: '/gf-vegan-recipes/breadbuns.jpg',
         oven: {type: "Circo roast / fan", temperature: "195 °C"},
         ingredients: [
             {
@@ -92,7 +92,7 @@ export const recipes: Recipe[] = [
             'Start preheating the oven to 195 °C fan.',
             'Add the vinegar to the chia seed mix, stir until combined.',
             'Use your hand or the mixer flat edge beater to combine the wet and dry ingredients. No need to knead, just mix enough to be combined.',
-            "Immediately dived the dough into 9 even sized buns (small handful each) on a baking tray lined with parchment. The dough is a bit sticky, it's okay, just make the buns as round and nice as you can.",
+            "Immediately divide the dough into 9 even sized buns (small handful each) on a baking tray lined with parchment. The dough is a bit sticky, it's okay, just make the buns as round and nice as you can.",
             'Bake for 20 minutes in 195 °C, then lower the oven to 175 °C and bake for another 20 minutes.',
             'Let the buns cool down before eating to allow the crumb to form. Can be frozen and reheated in the microwave.'
         ],
@@ -109,7 +109,7 @@ export const recipes: Recipe[] = [
         description: "Tasty naan bread to go with a curry. Fluffy, can't believe it's gluten freeeee.",
         totalTime: "45 mins",
         yields: "4 small naans - for two greedy people (or 4 polite)",
-        image: '/naan.jpg',
+        image: '/gf-vegan-recipes/naan.jpg',
         ingredients: [
             {
                 quantity: 2,
