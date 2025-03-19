@@ -192,4 +192,64 @@ export const recipes: Recipe[] = [
             linkText: "Loopy whisk"
         },
     },
+    {
+        slug: 'nut-roast',
+        title: 'Nut Roast',
+        category: 'Dinner',
+        description: "Little individual nut roasts, perfect for a Sunday roast or a Christmas dinner.",
+        totalTime: "35 mins",
+        yields: "2 portions",
+        oven: {type: "Circo roast / fan", temperature: "200 °C"},
+        image: '/gf-vegan-recipes/nut_roast.jpg',
+        ingredients: [
+            {
+                quantity: 1,
+                unit: '',
+                ingredient: 'small onion (or some shallots)',
+            },
+            {
+                quantity: 90,
+                unit: 'g',
+                ingredient: 'nuts (you can mix whatever you like, I often use hazelnuts, pistachio, walnuts and almonds)',
+            },
+            {
+                quantity: 1,
+                unit: 'stick',
+                ingredient: 'celery (optional)',
+            },
+            {
+                quantity: 2,
+                unit: 'cloves',
+                ingredient: 'garlic',
+            },
+            {
+                quantity: 1,
+                unit: 'tin',
+                ingredient: 'black beans (or some other beans you like, kidney beans work well)',
+            },
+            {
+                quantity: 2,
+                unit: 'tsp',
+                ingredient: 'apricot jam (or peach or some other sweet jam, cranberry works nicely for Christmas)',
+            },
+
+        ],
+        instructions: [
+            'Roughly chop the nuts. Chop the onion and celery finely and crush the garlic.',
+            'Heat up a frying pan without oil and toast the nuts until they start to smell nice. Remove from the pan into a mixing bowl.',
+            'Add some oil to the pan and fry the onion and celery until they start to soften.',
+            'Add the garlic and fry for a minute more.',
+            'Rinse the beans well and then add them to the pan and cook for a few minutes until they are heated through.',
+            'Season with salt and pepper, you can also add herbs or spices you like.',
+            'Add the fried veg into the mixing bowl with the nuts, and use a potato masher to mash everything together. You want to keep some texture, but also make sure the beans are mashed.',
+            'Line a small oven tray with parchment paper. Divide the mix into two portions and shape them to domes / half ball shapes. Squeeze them  gently to ensure they hold together.',
+            'Stir your jam to make it a bit more runny (add a tiny splash of water if needed), then brush the tops of the nut roasts with the jam.',
+            "Wait until you have about 15 mins of roasting time left for your other roastables, and then bake the nut roasts in 200 °C fan oven for around 15 minutes. (You can cook a bit more or less if your oven temp for the other dishes is different, it doesn't matter too much)",
+        ],
+        credit: {
+            text: "Adapted from",
+            link: "https://www.mindfulchef.com/healthy-recipes/nut-roast-with-cranberry-gravy-1",
+            linkText: "Mindful chef"
+        },
+    },
 ];
