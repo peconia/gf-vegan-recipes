@@ -34,7 +34,7 @@ export const recipes: Recipe[] = [
         slug: 'quick-bread-buns',
         title: 'Quick bread buns',
         category: 'Baking - Bread',
-        description: 'Easy bread buns that can be frozen and reheated in the microwave to get fresh bread every day. High in fiber, about 5.5g per bun when made with buckwheat.',
+        description: 'Easy bread buns that can be frozen and reheated in the microwave to get fresh bread every day. High in fibre, about 5.5g per bun when made with buckwheat.',
         totalTime: "1 hour",
         yields: "9 buns",
         image: '/gf-vegan-recipes/breadbuns.jpg',
