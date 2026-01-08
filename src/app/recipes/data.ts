@@ -15,6 +15,12 @@ export interface Ingredient {
     ingredient: string;
 }
 
+// Add a new interface for ingredient sections
+export interface IngredientSection {
+    title: string;
+    ingredients: Ingredient[];
+}
+
 export interface Recipe {
     slug: string;
     title: string;
@@ -24,12 +30,159 @@ export interface Recipe {
     yields: string,
     oven?: OvenInfo;
     image: string;
-    ingredients: Ingredient[];
+    // Allow ingredients to be either plain Ingredient objects or sections
+    ingredients: (Ingredient | IngredientSection)[];
     instructions: string[];
     credit?: Credit;
 }
 
 export const recipes: Recipe[] = [
+    {
+        slug: 'pumpkin-cake',
+        title: 'Pumpkin cake',
+        category: 'Baking',
+        description: 'Easy pumpkin cake from fresh pumpkin and oranges. Uses up the pumpkin from the veg box and is super tasty!',
+        totalTime: "3 hours",
+        yields: "1 cake",
+        image: '/gf-vegan-recipes/pumpkin-cake.jpg',
+        oven: {type: "Circo roast / fan", temperature: "165 °C"},
+        ingredients: [
+            {
+                title: 'Cake base',
+                ingredients: [
+                    {
+                        quantity: 200,
+                        unit: 'g',
+                        ingredient: 'coarsely grated pumpkin',
+                    },
+                    {
+                        quantity: 1,
+                        unit: '',
+                        ingredient: 'orange',
+                    },
+                    {
+                        quantity: 162,
+                        unit: 'g',
+                        ingredient: 'gluten-free flour',
+                    },
+                    {
+                        quantity: 120,
+                        unit: 'g',
+                        ingredient: 'almond flour / ground almonds',
+                    },
+                    {
+                        quantity: 0.25,
+                        unit: 'tsp',
+                        ingredient: 'xanthan gum (if your gf flour blend does not already contain it)',
+                    },
+                    {
+                        quantity: 120,
+                        unit: 'g',
+                        ingredient: 'light brown sugar',
+                    },
+                    {
+                        quantity: 0.5,
+                        unit: 'tsp',
+                        ingredient: 'baking soda',
+                    },
+                    {
+                        quantity: 2,
+                        unit: 'tsp',
+                        ingredient: 'baking powder (gluten free)',
+                    },
+                    {
+                        quantity: 1,
+                        unit: 'tsp',
+                        ingredient: 'cinnamon',
+                    },
+                    {
+                        quantity: 0.5,
+                        unit: 'tsp',
+                        ingredient: 'ground cloves',
+                    },
+                    {
+                        quantity: 0.5,
+                        unit: 'tsp',
+                        ingredient: 'ground ginger',
+                    },
+                    {
+                        quantity: 0.25,
+                        unit: 'tsp',
+                        ingredient: 'ground nutmeg',
+                    },
+                    {
+                        quantity: 1,
+                        unit: 'pinch',
+                        ingredient: 'salt',
+                    },
+                    {
+                        quantity: 90,
+                        unit: 'g',
+                        ingredient: 'oil (neutral flavour)',
+                    },
+                    {
+                        quantity: 100,
+                        unit: 'g',
+                        ingredient: 'plant based milk',
+                    }
+                ]
+            },
+            {
+                title: 'Topping',
+                ingredients: [
+                    {
+                        quantity: 125,
+                        unit: 'g',
+                        ingredient: 'softened vegan butter',
+                    },
+                    {
+                        quantity: 250,
+                        unit: 'g',
+                        ingredient: 'icing sugar',
+                    },
+                    {
+                        quantity: 1,
+                        unit: '',
+                        ingredient: 'orange',
+                    },                {
+                        quantity: 1,
+                        unit: 'pinch',
+                        ingredient: 'salt',
+                    },
+                    {
+                        quantity: 1,
+                        unit: 'handful',
+                        ingredient: 'walnut or pecan halves for decoration (optional)',
+                    },
+                ]
+            }
+        ],
+        instructions: [
+            'Grate the pumpkin coarsely on a plate. Zest the orange on to the same plate.',
+            'Prepare the 8" (20cm) spring form cake tin, add parchment paper to the bottom and grease the sides with a bit of oil.',
+            'Preheat the oven to 165 °C fan.',
+            'In a large mixing bowl, combine all the dry ingredients: gluten-free flour, almond flour, xanthan gum, sugar, baking soda, baking powder, spices and salt. Mix well.',
+            'Juice the orange into  a measuring jug, you should have around 100 ml of juice.',
+            'Add the oil and plant based milk to the orange juice, mix well.',
+            'Pour the wet ingredients into the dry ingredients, and mix until just combined.',
+            'Fold in the grated pumpkin and orange zest.',
+            'Pour the batter into the prepared cake tin and smooth the top with a spatula.',
+            'Bake in 165 °C fan oven for about 50 minutes, until a skewer inserted into the centre comes out clean.',
+            'Let the cake cool completely on a wire rack before removing from the tin.',
+            'Prepare the topping. In the stand mixer bowl with paddle attachment, beat the vegan butter 2-3 mins until creamy.',
+            'Add the icing sugar and beat for 5 more mins until fluffy, scraping down the sides with a spatula as needed.',
+            'Zest the orange straight into the bowl and squeeze in a splash of the juice.',
+            'Add a pinch of salt if you used unsalted butter. Mix until combined.',
+            'If the topping is too stiff, add a tiny splash of orange juice to loosen it up. If ot is too runny, add a bit more icing sugar.',
+            'Spread the topping thickly on top of the cooled cake with a spatula. Decorate with walnut or pecan halves if desired.',
+            'Slice and enjoy! Store any leftovers in the fridge.',
+        ],
+        credit: {
+            text: "Adapted from",
+            link: "https://biancazapatka.com/en/pumpkin-cake-recipe/#recipe",
+            linkText: "Bianca Zapatka's blog"
+        },
+    },
     {
         slug: 'quick-bread-buns',
         title: 'Quick bread buns',

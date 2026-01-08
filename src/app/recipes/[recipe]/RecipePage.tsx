@@ -18,6 +18,10 @@ export default function RecipePage() {
         notFound();
     }
 
+    const isIngredientSection = (item: any): item is { title: string; ingredients: any[] } => {
+        return item && typeof item.title === 'string' && Array.isArray(item.ingredients);
+    };
+
     return (
         <div className="container">
             <h1>{recipe.title}</h1>
@@ -51,10 +55,32 @@ export default function RecipePage() {
             </div>
             <h2>Ingredients</h2>
             <ul>
-                {recipe.ingredients.map((ingredient, index) => (
-                    <li key={index}>{formatFraction(ingredient.quantity)} {ingredient.unit} {ingredient.ingredient}</li>
-                ))}
+                {recipe.ingredients.map((item, index) => {
+                    if (isIngredientSection(item)) {
+                        // render a subsection with title and nested list
+                        return (
+                            <li key={index}>
+                                <h3>{item.title}</h3>
+                                <ul>
+                                    {item.ingredients.map((ing, idx) => (
+                                        <li key={idx}>
+                                            {formatFraction(ing.quantity)} {ing.unit} {ing.ingredient}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </li>
+                        );
+                    } else {
+                        // plain ingredient object, no subsection
+                        return (
+                            <li key={index}>
+                                {formatFraction(item.quantity)} {item.unit} {item.ingredient}
+                            </li>
+                        );
+                    }
+                })}
             </ul>
+
             <h2>Instructions</h2>
             <ol>
                 {recipe.instructions.map((instruction, index) => (
