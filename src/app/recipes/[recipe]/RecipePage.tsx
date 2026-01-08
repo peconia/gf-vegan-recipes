@@ -4,7 +4,7 @@ import React from "react";
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { recipes } from "@/app/recipes/data";
+import { recipes, Ingredient, IngredientSection } from "@/app/recipes/data";
 import { notFound } from 'next/navigation';
 import {formatFraction} from "@/utils/quantityHelper";
 
@@ -18,8 +18,8 @@ export default function RecipePage() {
         notFound();
     }
 
-    const isIngredientSection = (item: any): item is { title: string; ingredients: any[] } => {
-        return item && typeof item.title === 'string' && Array.isArray(item.ingredients);
+    const isIngredientSection = (item: Ingredient | IngredientSection): item is IngredientSection => {
+        return 'title' in item && Array.isArray((item as IngredientSection).ingredients);
     };
 
     return (
@@ -57,7 +57,6 @@ export default function RecipePage() {
             <ul>
                 {recipe.ingredients.map((item, index) => {
                     if (isIngredientSection(item)) {
-                        // render a subsection with title and nested list
                         return (
                             <li key={index}>
                                 <h3>{item.title}</h3>
