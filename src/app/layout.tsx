@@ -19,6 +19,7 @@ export default function RootLayout({children,}: {
     return (
         <html lang="en">
         <body className={roboto.className}>
+            <div className="binder-rings" aria-hidden="true" />
             <ViewTransition name="page-container">
                 {children}
             </ViewTransition>

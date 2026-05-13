@@ -8,6 +8,76 @@ body {
   line-height: 1.6;
 }
 
+/* -----------------------------------------------------------------------
+   Ring binder coil.
+
+   Alignment:
+     padding: 0 20px makes .binder-rings border-box match .container's
+     (800 content + 40 padding = 840px), so every tile aligns horizontally.
+
+   Geometry (tile = 20px wide × 28px tall, margin-bottom: -10px):
+     - Paper top in element coords:  y = 28 - 10 = 18
+     - Element bottom at element y = 28  (= container y = 10)
+     - Hole centre (container coords): (10, 7) → element (10, 25).
+       Hole r=3.5 → container y=3.5–10.5, i.e. element y=21.5–28.5.
+
+   Ellipse  cx=13.69, cy=28, rx=4, ry=26
+     - Left leg crosses paper top (y=18) at x = 13.69 − 4·√(1−(10/26)²) ≈ 10
+       → lined up with the hole at x=10.
+     - Right leg crosses paper top at x ≈ 17.38 → no hole there, the
+       container white covers it (right side disappears behind paper).
+     - Through the hole the left leg lies at x ≈ 9.7–9.8, so the wire
+       is clearly visible across the full hole height.
+
+   Stacking (with .binder-rings NOT creating a stacking context, both
+   pseudo-elements join the root stacking context, sandwiching .container):
+     ::before   z-index:1 — full arch behind paper (visible above paper
+                            and through the hole; right leg hidden by paper).
+     .container z-index:2 — paper, mask cuts the hole at (10, 7).
+     ::after    z-index:3 — short line in FRONT of paper, drawn only on
+                            the left leg between paper top (y=18) and hole
+                            top (y=21.5), bridging the visible gap so the
+                            wire appears continuous from arch into hole.
+   ----------------------------------------------------------------------- */
+.binder-rings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 28px;
+  margin-bottom: -10px;
+  position: relative;
+  /* No z-index — keeps .binder-rings out of any stacking context so the
+     pseudo-elements below can sit on either side of .container. */
+  pointer-events: none;
+}
+
+.binder-rings::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='28'%3E%3Cellipse cx='13.69' cy='28' rx='4' ry='26' fill='none' stroke='%23777' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 20px 28px;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+
+/* Bridge segment drawn IN FRONT of the paper, covering the 3.5px strip
+   between the paper top edge (y=18) and the hole top (y=21.5).
+   Endpoints match the ellipse's left leg at those y values, so the
+   stroke (with round caps of the same colour) merges seamlessly with
+   the arch above and the wire visible through the hole below. */
+.binder-rings::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='28'%3E%3Cline x1='10' y1='18' x2='9.82' y2='21.5' stroke='%23777' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 20px 28px;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+
 .container {
   max-width: 800px;
   min-height: calc(100vh - 80px);
@@ -18,6 +88,24 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  /* position:relative + z-index:2 sandwiches .container between the two
+     binder-rings pseudo-elements (::before z:1 behind, ::after z:3 in
+     front). The white paper covers the arch right leg; the mask hole
+     reveals the left leg; the ::after bridge runs over the paper. */
+  position: relative;
+  z-index: 2;
+  /* Hole at container (10, 7), r=3.5 → spans container y=3.5 to 10.5.
+     Moved 2px further from the paper top edge (was y=5), leaving a small
+     strip of clean paper above each hole. The wire fully fills the hole
+     vertically because .binder-rings now overlaps 10px into the paper. */
+  -webkit-mask-image: radial-gradient(circle at 10px 7px, transparent 3.5px, black 3.5px);
+  -webkit-mask-size: 20px 100%;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: 0 0;
+  mask-image: radial-gradient(circle at 10px 7px, transparent 3.5px, black 3.5px);
+  mask-size: 20px 100%;
+  mask-repeat: repeat-x;
+  mask-position: 0 0;
 }
 
 h1 {
@@ -119,7 +207,7 @@ html[data-nav-direction="backward"]::view-transition-old(page-container) {
 }
 html[data-nav-direction="backward"]::view-transition-new(page-container) {
   z-index: 2;
-  animation: binder-drop-down 0.25s ease-out 0.01s both;
+  animation: binder-drop-down 0.1s ease-out 0.01s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
