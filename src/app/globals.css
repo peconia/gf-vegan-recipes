@@ -29,15 +29,23 @@ body {
      - Through the hole the left leg lies at x ≈ 9.7–9.8, so the wire
        is clearly visible across the full hole height.
 
-   Stacking (with .binder-rings NOT creating a stacking context, both
-   pseudo-elements join the root stacking context, sandwiching .container):
-     ::before   z-index:1 — full arch behind paper (visible above paper
-                            and through the hole; right leg hidden by paper).
-     .container z-index:2 — paper, mask cuts the hole at (10, 7).
-     ::after    z-index:3 — short line in FRONT of paper, drawn only on
-                            the left leg between paper top (y=18) and hole
-                            top (y=21.5), bridging the visible gap so the
-                            wire appears continuous from arch into hole.
+   Stacking:
+     .binder-rings has a view-transition-name so it can stay on top of the
+     flipping page-container during the binder animation; that also forces
+     it into its own stacking context, which breaks the original
+     ::before-behind / ::after-in-front sandwich around .container. We
+     instead lift the whole element ABOVE .container (z-index 3 vs 2) and
+     mask ::before so the wire only paints where it would have been visible
+     under the old sandwich:
+       ::before — opaque above paper top (y < 18) AND inside the hole
+                  circle (centred at (10, 25), r=3.5) per 20px tile.
+                  Result: top arch + left leg through the hole; the right
+                  leg and the strip between paper top and hole top are
+                  masked away.
+       ::after  — bridge segment from y=18 (paper top) to y=21.5 (hole
+                  top), drawn unmasked on top of the paper.
+     .container still carries its own mask cutting the actual hole, so the
+     body background shows through the page around the visible left leg.
    ----------------------------------------------------------------------- */
 .binder-rings {
   max-width: 800px;
@@ -46,9 +54,20 @@ body {
   height: 28px;
   margin-bottom: -10px;
   position: relative;
-  /* No z-index — keeps .binder-rings out of any stacking context so the
-     pseudo-elements below can sit on either side of .container. */
   pointer-events: none;
+  /* Sit above .container (z-index: 2). view-transition-name (set below)
+     forces a stacking context, so we can no longer sandwich .container with
+     ::before behind it and ::after in front; instead the whole element goes
+     on top and ::before is masked to only paint where the wire should be
+     visible (see the ::before rule). */
+  z-index: 3;
+  /* Promote the rings to their own view-transition group so they can be
+     stacked ABOVE the flipping page-container snapshot during the binder
+     animation (see the ::view-transition-group(binder-rings) rule near the
+     keyframes). Without this they get baked into the default root snapshot,
+     which sits below page-container and disappears for the duration of the
+     flip. */
+  view-transition-name: binder-rings;
 }
 
 .binder-rings::before {
@@ -60,6 +79,30 @@ body {
   background-size: 20px 28px;
   background-repeat: repeat-x;
   background-position: 0 0;
+  /* Now drawn ON TOP of .container, so we have to clip the wire to the
+     parts that were visible under the original "behind paper" arrangement.
+     Two mask layers, combined with the default `add` composite (union of
+     opaque areas):
+       - linear gradient: opaque from element y=0 down to paper top (y=18),
+         then transparent — so the strip and the right leg do not paint
+         over solid paper.
+       - radial gradient: opaque inside a 3.5px disc centred at (10, 25)
+         per 20px tile, mirroring .container's hole mask, so the left leg
+         remains visible "through" the hole.
+     The bridge between paper top and hole top is drawn separately by the
+     unmasked ::after below. */
+  -webkit-mask-image:
+    linear-gradient(to bottom, black 0, black 18px, transparent 18px),
+    radial-gradient(circle at 10px 25px, black 3.5px, transparent 3.5px);
+  -webkit-mask-size: 100% 100%, 20px 100%;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-position: 0 0, 0 0;
+  mask-image:
+    linear-gradient(to bottom, black 0, black 18px, transparent 18px),
+    radial-gradient(circle at 10px 25px, black 3.5px, transparent 3.5px);
+  mask-size: 100% 100%, 20px 100%;
+  mask-repeat: no-repeat, repeat-x;
+  mask-position: 0 0, 0 0;
 }
 
 /* Bridge segment drawn IN FRONT of the paper, covering the 3.5px strip
@@ -191,6 +234,20 @@ a:hover {
 ::view-transition-new(page-container) {
   transform-origin: top center;
   backface-visibility: hidden;
+}
+
+/*
+ * Keep the ring binder coil visually on top of the flipping paper for the
+ * whole transition, so the page reads as moving past the rings rather than
+ * the rings popping back in at the end. The snapshot is static (no animation
+ * needed — same element on both pages); only its stacking matters.
+ */
+::view-transition-group(binder-rings) {
+  z-index: 100;
+}
+::view-transition-old(binder-rings),
+::view-transition-new(binder-rings) {
+  animation: none;
 }
 
 /*
