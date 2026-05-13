@@ -80,7 +80,7 @@ body {
 
 .container {
   max-width: 800px;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 100px);
   margin: 0 auto;
   background-color: white;
   padding: 20px;
@@ -153,7 +153,11 @@ a:hover {
   display: block;
   text-align: center;
   margin-top: 20px;
-  color: #d63384;
+}
+
+.back-link-top {
+  align-self: flex-start;
+  font-size: 0.9rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -163,34 +167,40 @@ a:hover {
 }
 
 /*
- * rotateX(+) sends the bottom TOWARD the viewer (positive Z = gets bigger).
- * rotateX(-) sends it AWAY (negative Z = gets smaller, which looked like going down).
- * Opacity fades out the tail to avoid overflip artefacts on tall pages.
+ * rotateX(+) sends the bottom TOWARD the viewer; rotateX(-) sends it away
+ * (which read as the page going down). The page rotates to 180° so it goes
+ * well past edge-on (90°) and folds back over the binder rings.
+ *
+ * backface-visibility:hidden on the view-transition pseudo-elements (set
+ * below) makes each snapshot vanish the instant its rotation crosses 90°.
+ * That cleanly hides the mirrored back face we'd otherwise see past 90° and
+ * reveals/replaces the page underneath progressively as the flip happens,
+ * rather than as a fade at the end.
  */
 @keyframes binder-flip-up {
-  0%   { transform: perspective(1500px) rotateX(0deg);  opacity: 1; }
-  75%  { opacity: 1; }
-  100% { transform: perspective(1500px) rotateX(75deg); opacity: 0; }
+  0%   { transform: perspective(1500px) rotateX(0deg);   }
+  100% { transform: perspective(1500px) rotateX(180deg); }
 }
 
 @keyframes binder-drop-down {
-  0%   { transform: perspective(1500px) rotateX(75deg); opacity: 0; }
-  25%  { opacity: 1; }
-  100% { transform: perspective(1500px) rotateX(0deg);  opacity: 1; }
+  0%   { transform: perspective(1500px) rotateX(180deg); }
+  100% { transform: perspective(1500px) rotateX(0deg);   }
 }
 
 ::view-transition-old(page-container),
 ::view-transition-new(page-container) {
   transform-origin: top center;
+  backface-visibility: hidden;
 }
 
 /*
  * Forward (menu → recipe):
- * Old page flips up toward viewer; new page already flat underneath, revealed as old lifts.
+ * Old page flips up over the rings; new page sits flat underneath and is
+ * revealed as the old page rotates past 90° and its back face is hidden.
  */
 html[data-nav-direction="forward"]::view-transition-old(page-container) {
   z-index: 2;
-  animation: binder-flip-up 0.1s ease-in both;
+  animation: binder-flip-up 0.6s ease-in both;
 }
 html[data-nav-direction="forward"]::view-transition-new(page-container) {
   z-index: 1;
@@ -199,7 +209,9 @@ html[data-nav-direction="forward"]::view-transition-new(page-container) {
 
 /*
  * Backward (recipe → menu):
- * Old page stays flat; new page drops down from the rings on top of it.
+ * Old page stays flat; new page drops down from behind the rings on top of
+ * it, becoming visible the moment it crosses 90° and progressively covering
+ * the old page as it lands.
  */
 html[data-nav-direction="backward"]::view-transition-old(page-container) {
   z-index: 1;
@@ -207,13 +219,13 @@ html[data-nav-direction="backward"]::view-transition-old(page-container) {
 }
 html[data-nav-direction="backward"]::view-transition-new(page-container) {
   z-index: 2;
-  animation: binder-drop-down 0.1s ease-out 0.01s both;
+  animation: binder-drop-down 0.6s ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(page-container),
   ::view-transition-new(page-container) {
-    animation-duration: 0.01ms;
+    animation-duration: 0.1ms;
     animation-delay: 0s;
   }
 }

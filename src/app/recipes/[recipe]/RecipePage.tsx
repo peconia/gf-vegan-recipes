@@ -24,6 +24,9 @@ export default function RecipePage() {
 
     return (
         <div className="container">
+            <TransitionLink direction="backward" href="/" className="back-link-top">
+                ← Back to recipes
+            </TransitionLink>
             <h1>{recipe.title}</h1>
             {recipe.image && (
                 <Image
@@ -91,7 +94,7 @@ export default function RecipePage() {
             <p>{recipe.credit?.text} <a href={recipe.credit?.link}>{recipe.credit?.linkText}</a>.</p>
 
             <TransitionLink direction="backward" href="/" className="back-link">
-                Back to Home
+                ← Back to recipes
             </TransitionLink>
         </div>
     );
