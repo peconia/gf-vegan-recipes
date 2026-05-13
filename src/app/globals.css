@@ -8,8 +8,122 @@ body {
   line-height: 1.6;
 }
 
+/* -----------------------------------------------------------------------
+   Ring binder coil.
+
+   Alignment:
+     padding: 0 20px makes .binder-rings border-box match .container's
+     (800 content + 40 padding = 840px), so every tile aligns horizontally.
+
+   Geometry (tile = 20px wide × 28px tall, margin-bottom: -10px):
+     - Paper top in element coords:  y = 28 - 10 = 18
+     - Element bottom at element y = 28  (= container y = 10)
+     - Hole centre (container coords): (10, 7) → element (10, 25).
+       Hole r=3.5 → container y=3.5–10.5, i.e. element y=21.5–28.5.
+
+   Ellipse  cx=13.69, cy=28, rx=4, ry=26
+     - Left leg crosses paper top (y=18) at x = 13.69 − 4·√(1−(10/26)²) ≈ 10
+       → lined up with the hole at x=10.
+     - Right leg crosses paper top at x ≈ 17.38 → no hole there, the
+       container white covers it (right side disappears behind paper).
+     - Through the hole the left leg lies at x ≈ 9.7–9.8, so the wire
+       is clearly visible across the full hole height.
+
+   Stacking:
+     .binder-rings has a view-transition-name so it can stay on top of the
+     flipping page-container during the binder animation; that also forces
+     it into its own stacking context, which breaks the original
+     ::before-behind / ::after-in-front sandwich around .container. We
+     instead lift the whole element ABOVE .container (z-index 3 vs 2) and
+     mask ::before so the wire only paints where it would have been visible
+     under the old sandwich:
+       ::before — opaque above paper top (y < 18) AND inside the hole
+                  circle (centred at (10, 25), r=3.5) per 20px tile.
+                  Result: top arch + left leg through the hole; the right
+                  leg and the strip between paper top and hole top are
+                  masked away.
+       ::after  — bridge segment from y=18 (paper top) to y=21.5 (hole
+                  top), drawn unmasked on top of the paper.
+     .container still carries its own mask cutting the actual hole, so the
+     body background shows through the page around the visible left leg.
+   ----------------------------------------------------------------------- */
+.binder-rings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 28px;
+  margin-bottom: -10px;
+  position: relative;
+  pointer-events: none;
+  /* Sit above .container (z-index: 2). view-transition-name (set below)
+     forces a stacking context, so we can no longer sandwich .container with
+     ::before behind it and ::after in front; instead the whole element goes
+     on top and ::before is masked to only paint where the wire should be
+     visible (see the ::before rule). */
+  z-index: 3;
+  /* Promote the rings to their own view-transition group so they can be
+     stacked ABOVE the flipping page-container snapshot during the binder
+     animation (see the ::view-transition-group(binder-rings) rule near the
+     keyframes). Without this they get baked into the default root snapshot,
+     which sits below page-container and disappears for the duration of the
+     flip. */
+  view-transition-name: binder-rings;
+}
+
+.binder-rings::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='28'%3E%3Cellipse cx='13.69' cy='28' rx='4' ry='26' fill='none' stroke='%23777' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 20px 28px;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+  /* Now drawn ON TOP of .container, so we have to clip the wire to the
+     parts that were visible under the original "behind paper" arrangement.
+     Two mask layers, combined with the default `add` composite (union of
+     opaque areas):
+       - linear gradient: opaque from element y=0 down to paper top (y=18),
+         then transparent — so the strip and the right leg do not paint
+         over solid paper.
+       - radial gradient: opaque inside a 3.5px disc centred at (10, 25)
+         per 20px tile, mirroring .container's hole mask, so the left leg
+         remains visible "through" the hole.
+     The bridge between paper top and hole top is drawn separately by the
+     unmasked ::after below. */
+  -webkit-mask-image:
+    linear-gradient(to bottom, black 0, black 18px, transparent 18px),
+    radial-gradient(circle at 10px 25px, black 3.5px, transparent 3.5px);
+  -webkit-mask-size: 100% 100%, 20px 100%;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-position: 0 0, 0 0;
+  mask-image:
+    linear-gradient(to bottom, black 0, black 18px, transparent 18px),
+    radial-gradient(circle at 10px 25px, black 3.5px, transparent 3.5px);
+  mask-size: 100% 100%, 20px 100%;
+  mask-repeat: no-repeat, repeat-x;
+  mask-position: 0 0, 0 0;
+}
+
+/* Bridge segment drawn IN FRONT of the paper, covering the 3.5px strip
+   between the paper top edge (y=18) and the hole top (y=21.5).
+   Endpoints match the ellipse's left leg at those y values, so the
+   stroke (with round caps of the same colour) merges seamlessly with
+   the arch above and the wire visible through the hole below. */
+.binder-rings::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='28'%3E%3Cline x1='10' y1='18' x2='9.82' y2='21.5' stroke='%23777' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 20px 28px;
+  background-repeat: repeat-x;
+  background-position: 0 0;
+}
+
 .container {
   max-width: 800px;
+  min-height: calc(100vh - 100px);
   margin: 0 auto;
   background-color: white;
   padding: 20px;
@@ -17,6 +131,24 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  /* position:relative + z-index:2 sandwiches .container between the two
+     binder-rings pseudo-elements (::before z:1 behind, ::after z:3 in
+     front). The white paper covers the arch right leg; the mask hole
+     reveals the left leg; the ::after bridge runs over the paper. */
+  position: relative;
+  z-index: 2;
+  /* Hole at container (10, 7), r=3.5 → spans container y=3.5 to 10.5.
+     Moved 2px further from the paper top edge (was y=5), leaving a small
+     strip of clean paper above each hole. The wire fully fills the hole
+     vertically because .binder-rings now overlaps 10px into the paper. */
+  -webkit-mask-image: radial-gradient(circle at 10px 7px, transparent 3.5px, black 3.5px);
+  -webkit-mask-size: 20px 100%;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: 0 0;
+  mask-image: radial-gradient(circle at 10px 7px, transparent 3.5px, black 3.5px);
+  mask-size: 20px 100%;
+  mask-repeat: repeat-x;
+  mask-position: 0 0;
 }
 
 h1 {
@@ -64,11 +196,93 @@ a:hover {
   display: block;
   text-align: center;
   margin-top: 20px;
-  color: #d63384;
+}
+
+.back-link-top {
+  align-self: flex-start;
+  font-size: 0.9rem;
 }
 
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+/*
+ * rotateX(+) sends the bottom TOWARD the viewer; rotateX(-) sends it away
+ * (which read as the page going down). The page rotates to 180° so it goes
+ * well past edge-on (90°) and folds back over the binder rings.
+ *
+ * backface-visibility:hidden on the view-transition pseudo-elements (set
+ * below) makes each snapshot vanish the instant its rotation crosses 90°.
+ * That cleanly hides the mirrored back face we'd otherwise see past 90° and
+ * reveals/replaces the page underneath progressively as the flip happens,
+ * rather than as a fade at the end.
+ */
+@keyframes binder-flip-up {
+  0%   { transform: perspective(1500px) rotateX(0deg);   }
+  100% { transform: perspective(1500px) rotateX(180deg); }
+}
+
+@keyframes binder-drop-down {
+  0%   { transform: perspective(1500px) rotateX(180deg); }
+  100% { transform: perspective(1500px) rotateX(0deg);   }
+}
+
+::view-transition-old(page-container),
+::view-transition-new(page-container) {
+  transform-origin: top center;
+  backface-visibility: hidden;
+}
+
+/*
+ * Keep the ring binder coil visually on top of the flipping paper for the
+ * whole transition, so the page reads as moving past the rings rather than
+ * the rings popping back in at the end. The snapshot is static (no animation
+ * needed — same element on both pages); only its stacking matters.
+ */
+::view-transition-group(binder-rings) {
+  z-index: 100;
+}
+::view-transition-old(binder-rings),
+::view-transition-new(binder-rings) {
+  animation: none;
+}
+
+/*
+ * Forward (menu → recipe):
+ * Old page flips up over the rings; new page sits flat underneath and is
+ * revealed as the old page rotates past 90° and its back face is hidden.
+ */
+html[data-nav-direction="forward"]::view-transition-old(page-container) {
+  z-index: 2;
+  animation: binder-flip-up 0.6s ease-in both;
+}
+html[data-nav-direction="forward"]::view-transition-new(page-container) {
+  z-index: 1;
+  animation: none;
+}
+
+/*
+ * Backward (recipe → menu):
+ * Old page stays flat; new page drops down from behind the rings on top of
+ * it, becoming visible the moment it crosses 90° and progressively covering
+ * the old page as it lands.
+ */
+html[data-nav-direction="backward"]::view-transition-old(page-container) {
+  z-index: 1;
+  animation: none;
+}
+html[data-nav-direction="backward"]::view-transition-new(page-container) {
+  z-index: 2;
+  animation: binder-drop-down 0.6s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-container),
+  ::view-transition-new(page-container) {
+    animation-duration: 0.1ms;
+    animation-delay: 0s;
   }
 }

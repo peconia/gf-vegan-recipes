@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import {Noto_Serif} from 'next/font/google';
-import React from "react";
+import React, { ViewTransition } from "react";
 import './globals.css';
 
 const roboto = Noto_Serif({
@@ -18,7 +18,12 @@ export default function RootLayout({children,}: {
 }) {
     return (
         <html lang="en">
-        <body className={roboto.className}>{children}</body>
+        <body className={roboto.className}>
+            <div className="binder-rings" aria-hidden="true" />
+            <ViewTransition name="page-container">
+                {children}
+            </ViewTransition>
+        </body>
         </html>
     );
 }

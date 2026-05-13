@@ -3,7 +3,10 @@ import type {NextConfig} from "next";
 const nextConfig: NextConfig = {
     output: 'export',
     images: {unoptimized: true},
-    basePath: '/gf-vegan-recipes'
+    basePath: '/gf-vegan-recipes',
+    experimental: {
+        viewTransition: true,
+    },
 };
 
 export default nextConfig;
