@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
 import {recipes} from "@/app/recipes/data";
 
 export default function Home() {
@@ -24,7 +24,9 @@ export default function Home() {
                         <ul>
                             {recipes.map((recipe) => (
                                 <li key={recipe.slug}>
-                                    <Link href={`/recipes/${recipe.slug}`}>{recipe.title}</Link>
+                                    <TransitionLink direction="forward" href={`/recipes/${recipe.slug}`}>
+                                        {recipe.title}
+                                    </TransitionLink>
                                 </li>
                             ))}
                         </ul>

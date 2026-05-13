@@ -10,6 +10,7 @@ body {
 
 .container {
   max-width: 800px;
+  min-height: calc(100vh - 80px);
   margin: 0 auto;
   background-color: white;
   padding: 20px;
@@ -70,5 +71,61 @@ a:hover {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+/*
+ * rotateX(+) sends the bottom TOWARD the viewer (positive Z = gets bigger).
+ * rotateX(-) sends it AWAY (negative Z = gets smaller, which looked like going down).
+ * Opacity fades out the tail to avoid overflip artefacts on tall pages.
+ */
+@keyframes binder-flip-up {
+  0%   { transform: perspective(1500px) rotateX(0deg);  opacity: 1; }
+  75%  { opacity: 1; }
+  100% { transform: perspective(1500px) rotateX(75deg); opacity: 0; }
+}
+
+@keyframes binder-drop-down {
+  0%   { transform: perspective(1500px) rotateX(75deg); opacity: 0; }
+  25%  { opacity: 1; }
+  100% { transform: perspective(1500px) rotateX(0deg);  opacity: 1; }
+}
+
+::view-transition-old(page-container),
+::view-transition-new(page-container) {
+  transform-origin: top center;
+}
+
+/*
+ * Forward (menu → recipe):
+ * Old page flips up toward viewer; new page already flat underneath, revealed as old lifts.
+ */
+html[data-nav-direction="forward"]::view-transition-old(page-container) {
+  z-index: 2;
+  animation: binder-flip-up 0.1s ease-in both;
+}
+html[data-nav-direction="forward"]::view-transition-new(page-container) {
+  z-index: 1;
+  animation: none;
+}
+
+/*
+ * Backward (recipe → menu):
+ * Old page stays flat; new page drops down from the rings on top of it.
+ */
+html[data-nav-direction="backward"]::view-transition-old(page-container) {
+  z-index: 1;
+  animation: none;
+}
+html[data-nav-direction="backward"]::view-transition-new(page-container) {
+  z-index: 2;
+  animation: binder-drop-down 0.25s ease-out 0.01s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-container),
+  ::view-transition-new(page-container) {
+    animation-duration: 0.01ms;
+    animation-delay: 0s;
   }
 }
