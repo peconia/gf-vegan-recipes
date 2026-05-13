@@ -144,7 +144,7 @@ export const recipes: Recipe[] = [
                         quantity: 1,
                         unit: '',
                         ingredient: 'orange',
-                    },                {
+                    }, {
                         quantity: 1,
                         unit: 'pinch',
                         ingredient: 'salt',
@@ -403,6 +403,98 @@ export const recipes: Recipe[] = [
             text: "Adapted from",
             link: "https://www.mindfulchef.com/healthy-recipes/nut-roast-with-cranberry-gravy-1",
             linkText: "Mindful chef"
+        },
+    },
+    {
+        slug: 'cabbage-stew',
+        title: 'Kaalilaatikko - cabbage stew',
+        category: 'Dinner',
+        description: "Traditional Finnish delicacy, just like my grandma made it. But vegan.",
+        totalTime: "3 hours",
+        yields: "4 portions",
+        oven: {type: "Circo roast / fan", temperature: "175 °C"},
+        image: '/gf-vegan-recipes/cabbage_stew.jpg',
+        ingredients: [
+            {
+                quantity: 1,
+                unit: '',
+                ingredient: 'large onion (or 2 small)',
+            },
+            {
+                quantity: 1,
+                unit: '',
+                ingredient: 'cabbage, about 1kg (can use white, savoy or whatever)',
+            },
+            {
+                quantity: 3,
+                unit: '',
+                ingredient: 'medium carrots (2 large or 4 small)',
+            },
+            {
+                quantity: 4,
+                unit: 'cloves',
+                ingredient: 'garlic',
+            },
+            {
+                quantity: 2,
+                unit: 'dl',
+                ingredient: 'pudding rice',
+            },
+            {
+                quantity: 4,
+                unit: 'dl',
+                ingredient: 'water (for rice)',
+            },
+            {
+                quantity: 2,
+                unit: 'dl',
+                ingredient: 'soy mince (TVP)',
+            },
+            {
+                quantity: 2,
+                unit: '',
+                ingredient: 'stock cubes',
+            },
+            {
+                quantity: 7,
+                unit: 'dl',
+                ingredient: 'water (for stock)',
+            },
+            {
+                quantity: 2,
+                unit: 'tbsp',
+                ingredient: 'gluten free soy sauce (or tamari)',
+            },
+            {
+                quantity: 2,
+                unit: 'tsp',
+                ingredient: 'dried marjoram',
+            },
+            {
+                quantity: 0.5,
+                unit: 'dl',
+                ingredient: 'black treacle',
+            },
+
+        ],
+        instructions: [
+            'Add the rice and 4 dl water to small saucepan with a lid. Cook until the water has been absorbed into the rice. (Bring to boil, then low heat for 10 mins, then turn heat off but keep the pan on the stove and leave to steam under the lid for another 10 mins.)',
+            'Chop the onion and thinly slice the carrots. Fry in a large pot (5+ litres), starting from onions and add in the carrot after a few minutes.',
+            'While the rice, onions and carrots are cooking, discard the outer cabbage leaves and the hard stem, and chop the rest to small ish pieces. Add the cabbage into the pan as you chop it, and keep frying together with the onions until it all starts to soften slightly.',
+            'Finely chop the garlic and add to the cabbage, continuing frying for another minute or so.',
+            "Start preheating the oven to 175°C fan.",
+            'Add in the soy mince, stock cubes, 7 dl boiled water and soy sauce to the cabbage pot, and stir until the stock cubes have fully dissolved and everything is boiling.',
+            'Turn down the heat to low. Season with salt and the marjoram, you can also add pepper if you like.',
+            'Add in the rice and any remaining water from that pot, and the treacle. (You can eyeball the treacle amount, I usually dip a large spoon in the treacle jar and mix that in as it is so sticky.) Mix thoroughly and check the flavour. You want this to be fairly salty, so add a bit more salt if needed.',
+            'Pour into a large oven dish. You should have enough liquid so that the ingredients are mostly covered, but the top layer is not fully submerged. Add a splash of stock or water if needed and mix it in.',
+            "Cover with foil loosely and bake for 1 hour to 1 hour and 30 mins. After that, remove the foil and bake for another 30 mins to crisp up the top. (The longer you cook the nicer it gets, but you can get away with shorter cooking time if you're too hungry to wait!)",
+            "Serve with lingonberry jam. Trust me it's the best way!",
+            'Leftovers can be stored in the fridge and reheated in the same temp for 40 mins or so, no foil. Add a splash of water to the top if it looks dry as you put it in the oven.',
+        ],
+        credit: {
+            text: "Veganised from my grandma's recipe",
+            link: "",
+            linkText: ""
         },
     },
 ];
